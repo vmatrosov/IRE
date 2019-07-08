@@ -13,7 +13,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-
 namespace Wpf
 {
     /// <summary>
@@ -21,6 +20,8 @@ namespace Wpf
     /// </summary>
     public partial class MainWindow : Window
     {
+        LegShape captureEl = null;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -29,28 +30,33 @@ namespace Wpf
             h1.Position = new Point(100, 100);
             h1.UpdateShape();
 
-            Leg h2 = new Leg(h1);
-            h2.Angle = 90;
-            h2.Length = 100;
-            h2.UpdatePos();
+            LegShape leg1 = new LegShape();
+            leg1.Leg.Angle = 90;
+            leg1.Leg.Length = 100;            
+            leg1.Leg.Prev = h1;
+            leg1.Leg.UpdatePos();
 
-            Leg h3 = new Leg(h2);
-            h3.Angle = 135;
-            h3.Length = 200;
-            h3.UpdatePos();
+            LegShape leg2 = new LegShape();
+            leg2.Leg.Angle = 135;
+            leg2.Leg.Length = 200;            
+            leg2.Leg.Prev = leg1.Leg;
+            leg2.Leg.UpdatePos();
+
+            canvas.Children.Add(leg1.line);
+            canvas.Children.Add(leg2.line);
 
             canvas.Children.Add(h1.el);
-            canvas.Children.Add(h2.Shape);
-            canvas.Children.Add(h3.Shape);
+            canvas.Children.Add(leg1.point);
+            canvas.Children.Add(leg2.point);
 
-            h2.Shape.MouseLeftButtonDown += Ellipse_MouseLeftButtonDown;
-            h3.Shape.MouseLeftButtonDown += Ellipse_MouseLeftButtonDown;
+            leg1.MouseLeftButtonDown += Ellipse_MouseLeftButtonDown;
+            leg2.MouseLeftButtonDown += Ellipse_MouseLeftButtonDown;
 
-            h2.Shape.MouseLeftButtonUp += Ellipse_MouseLeftButtonUp;
-            h3.Shape.MouseLeftButtonUp += Ellipse_MouseLeftButtonUp;
+            leg1.MouseLeftButtonUp += Ellipse_MouseLeftButtonUp;
+            leg2.MouseLeftButtonUp += Ellipse_MouseLeftButtonUp;
+
+            canvas.MouseLeftButtonUp += Ellipse_MouseLeftButtonUp;
         }
-
-        FrameworkElement captureEl = null;
 
         private void canvas_MouseMove(object sender, MouseEventArgs e)
         {
@@ -60,19 +66,26 @@ namespace Wpf
 
             if (captureEl != null)
             {
-                if (captureEl is Ellipse)
-                    (captureEl as LegShape).Pos = pos;
+                if (captureEl is LegShape)
+                {
+                    (captureEl as LegShape).Leg.Position = pos;
+                    (captureEl as LegShape).Leg.UpdateRelativePos();
+                }
             }
         }
 
         private void Ellipse_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             captureEl = sender as LegShape;
+
+            gbLegData.DataContext = (sender as LegShape).Leg;
         }
 
         private void Ellipse_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             captureEl = null;
         }
+
+
     }
 }

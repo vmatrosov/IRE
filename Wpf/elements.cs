@@ -11,6 +11,11 @@ using System.Windows.Media;
 
 namespace Wpf
 {
+    static class Helper
+    {
+        public const double ToDeg = 180.0 / Math.PI;
+        public const double ToRad = Math.PI / 180.0;
+    }
 
     public class Node : INotifyPropertyChanged
     {
@@ -25,15 +30,41 @@ namespace Wpf
         }
 
         protected Point position;
-        public Point Position
+
+        public virtual Point Position
         {
             get { return position; }
+            set { position = value; }
+        }
+
+        private Node prev;
+        public Node Prev
+        {
+
+
+            get
+            {
+                return prev;
+            }
             set
             {
-                position = value;
-                NotifyPropertyChanged("Position");
+                prev = value;
+
+                if (prev != null)
+                    prev.next = this;
             }
         }
+
+        private Node next;
+        public Node Next
+        {
+            get
+            {
+                return next;
+            }
+
+        }
+
     }
 
     public class StaticHinge : Node
@@ -58,19 +89,15 @@ namespace Wpf
 
     public class Leg : Node
     {
-        public Leg(Node parent)
+        public override Point Position
         {
-            prev = parent;
-            if (parent is Leg)
-                (parent as Leg).next = this;
-
-            Shape = new LegShape(this);
+            set
+            {
+                position = value;
+                UpdateRelativePos();
+                NotifyPropertyChanged("Position");
+            }
         }
-
-        public LegShape Shape;
-
-        public Node prev;
-        public Node next;
 
         private double length = 1.0;
         public double Length
@@ -80,7 +107,7 @@ namespace Wpf
                 if (value > 0)
                 {
                     length = value;
-                    NotifyPropertyChanged("Length ");
+                    NotifyPropertyChanged("Length");
                 }
             }
         }
@@ -90,46 +117,58 @@ namespace Wpf
         {
             get
             {
-                return angle * 180.0 / Math.PI;
+                return angle * Helper.ToDeg;
             }
             set
             {
                 if(value >=0 && value < 360.0)
                 {
-                    angle = value * Math.PI / 360.0;
+                    angle = value * Helper.ToRad;
                     NotifyPropertyChanged("Angle");
+
                 }
             }
         }
 
         public void UpdateRelativePos()
         {
-            var dist = Math.Sqrt(Math.Pow(position.Y - prev.Position.Y, 2) + Math.Pow(position.X - prev.Position.X, 2));
-            angle = Math.Acos(position.Y - prev.Position.Y) / dist;
-            if (position.X < prev.Position.X)
+            var dist = Math.Sqrt(Math.Pow(position.Y - Prev.Position.Y, 2) + Math.Pow(position.X - Prev.Position.X, 2));
+
+            angle = Math.Acos((position.Y - Prev.Position.Y) / dist);
+
+            if (position.X < Prev.Position.X)
                 angle += Math.PI;
+
+            NotifyPropertyChanged("Angle");
 
             UpdatePos();
 
-            if (next != null)
+            if (Next != null)
             {
-                if (next is Leg)
+                if (Next is Leg)
                 {
-                    (next as Leg).UpdateRelativePos();
+                    (Next as Leg).UpdateRelativePos();
                 }
             }
         }
 
         public void  UpdatePos()
         {
-            position.X = prev.Position.X + Math.Sin(angle) * length;
-            position.Y = prev.Position.Y + Math.Cos(angle) * length;
 
-            Shape.From = prev.Position;
-            Shape.To = this.position;
-            Shape.Update();
+            position.X = Prev.Position.X + Math.Sin(angle) * length;
+            position.Y = Prev.Position.Y + Math.Cos(angle) * length;
 
+            OnPositionUpdate();
         }
+
+        public Action PosUpdate;
+
+        protected void OnPositionUpdate()
+        {
+            if (PosUpdate != null)
+                PosUpdate();
+        }
+
 
     }
 

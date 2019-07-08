@@ -13,9 +13,34 @@
         </Grid.ColumnDefinitions>
         <Canvas Grid.Column="0" Name="canvas" MouseMove="canvas_MouseMove" Background="AliceBlue">
         </Canvas>
+
+        
         <StackPanel Grid.Column="1" Orientation="Vertical">
             <TextBlock Name="tbX" Width="100" />
             <TextBlock Name="tbY" Width="100" />
+
+            <GroupBox Header="LEG" Name="gbLegData">
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="x:" />
+                        <TextBox Name="legX" Width="100" Text="{Binding Path=Position.X}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="y:" />
+                        <TextBox Name="legY" Width="100" Text="{Binding Path=Position.X}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="dist:" />
+                        <TextBox Name="legDist" Width="100" Text="{Binding Path=Length}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="ang:" />
+                        <TextBox Name="legAng" Width="100" Text="{Binding Path=Angle}"/>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+            
+
         </StackPanel>
 
 
