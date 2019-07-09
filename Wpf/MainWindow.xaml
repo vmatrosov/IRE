@@ -23,11 +23,11 @@
                 <StackPanel Orientation="Vertical">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="x:" />
-                        <TextBox Name="legX" Width="100" Text="{Binding Path=Position.X}" />
+                        <TextBox Name="legX" Width="100" Text="{Binding Path=X}" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="y:" />
-                        <TextBox Name="legY" Width="100" Text="{Binding Path=Position.X}" />
+                        <TextBox Name="legY" Width="100" Text="{Binding Path=Y}" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="dist:" />

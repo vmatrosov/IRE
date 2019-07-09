@@ -37,6 +37,18 @@ namespace Wpf
             set { position = value; }
         }
 
+       public double X
+        {
+            get { return position.X; }
+            set { position.X = value; }
+        }
+
+        public double Y
+        {
+            get { return position.Y; }
+            set { position.Y = value; }
+        }
+
         private Node prev;
         public Node Prev
         {

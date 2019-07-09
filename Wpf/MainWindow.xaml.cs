@@ -42,18 +42,28 @@ namespace Wpf
             leg2.Leg.Prev = leg1.Leg;
             leg2.Leg.UpdatePos();
 
+            LegShape leg3 = new LegShape();
+            leg3.Leg.Angle = 135;
+            leg3.Leg.Length = 200;
+            leg3.Leg.Prev = leg2.Leg;
+            leg3.Leg.UpdatePos();
+
             canvas.Children.Add(leg1.line);
             canvas.Children.Add(leg2.line);
+            canvas.Children.Add(leg3.line);
 
             canvas.Children.Add(h1.el);
             canvas.Children.Add(leg1.point);
             canvas.Children.Add(leg2.point);
+            canvas.Children.Add(leg3.point);
 
             leg1.MouseLeftButtonDown += Ellipse_MouseLeftButtonDown;
             leg2.MouseLeftButtonDown += Ellipse_MouseLeftButtonDown;
+            leg3.MouseLeftButtonDown += Ellipse_MouseLeftButtonDown;
 
             leg1.MouseLeftButtonUp += Ellipse_MouseLeftButtonUp;
             leg2.MouseLeftButtonUp += Ellipse_MouseLeftButtonUp;
+            leg3.MouseLeftButtonUp += Ellipse_MouseLeftButtonUp;
 
             canvas.MouseLeftButtonUp += Ellipse_MouseLeftButtonUp;
         }
