@@ -126,7 +126,9 @@ namespace Wpf
                 int x = e.X;
                 int y = glControl.Height - e.Y;
 
-                byte[] pixels = new byte[4]; 
+                byte[] pixels = new byte[4];
+
+                glControl.Invalidate();
                 GL.ReadPixels(x, y, 1, 1, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, pixels);
 
                 tbPixR.Text = pixels[0].ToString();
