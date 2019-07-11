@@ -17,6 +17,11 @@ namespace Wpf
         public const double ToRad = Math.PI / 180.0;
     }
 
+    public enum SliderType
+    {
+        Horizontal, Vertical
+    }
+
     public class Node : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -31,13 +36,20 @@ namespace Wpf
 
         protected Point position;
 
-        public virtual Point Position
+        public Point Position
         {
-            get { return position; }
-            set { position = value; }
+            get
+            {
+                return position;
+            }
+            set
+            {
+                position = value;
+                NotifyPropertyChanged("Position");
+            }
         }
 
-       public double X
+        public double X
         {
             get { return position.X; }
             set { position.X = value; }
@@ -49,66 +61,46 @@ namespace Wpf
             set { position.Y = value; }
         }
 
-        private Node prev;
         public Node Prev
         {
-
-
-            get
-            {
-                return prev;
-            }
-            set
-            {
-                prev = value;
-
-                if (prev != null)
-                    prev.next = this;
-            }
+            get; set;
         }
 
-        private Node next;
         public Node Next
         {
-            get
-            {
-                return next;
-            }
-
+            get; set;
         }
 
-    }
+        public event Action PosUpdate;
 
-    public class StaticHinge : Node
-    {
-        public StaticHinge()
+        protected void OnPositionUpdate()
         {
-            el.Height = 10;
-            el.Width = 10;
-            el.Fill = Brushes.Black;
+            if (PosUpdate != null)
+                PosUpdate();
         }
 
-        public Leg next;
-
-        public Ellipse el = new Ellipse();
-
-
-        public void UpdateShape()
-        {
-            el.Margin = new Thickness(position.X - el.Width / 2, position.Y - el.Width / 2, 0, 0);
-        }
     }
 
     public class Leg : Node
     {
-        public override Point Position
+        public Leg(Node prev)
         {
-            set
-            {
-                position = value;
-                UpdateRelativePos();
-                NotifyPropertyChanged("Position");
-            }
+            this.Prev = prev;
+
+            if (prev != null)
+                Prev.Next = this;
+        }
+
+        public Leg(Node prev, double angle_, double length_)
+        {
+            Prev = prev;
+            if (Prev != null)
+                Prev.Next = this;
+
+            Angle = angle_;
+            Length = length_;
+
+            UpdatePos();
         }
 
         private double length = 1.0;
@@ -124,7 +116,7 @@ namespace Wpf
             }
         }
 
-        public double angle;
+        public double angle = 0.0;
         public double Angle
         {
             get
@@ -140,6 +132,13 @@ namespace Wpf
 
                 }
             }
+        }
+
+        public void SetPosition(Point newPos)
+        {
+            position = newPos;
+            UpdateRelativePos();
+            NotifyPropertyChanged("Position");
         }
 
         public void UpdateRelativePos()
@@ -164,24 +163,60 @@ namespace Wpf
             }
         }
 
-        public void  UpdatePos()
+        public void UpdatePos()
         {
-
             position.X = Prev.Position.X + Math.Sin(angle) * length;
             position.Y = Prev.Position.Y + Math.Cos(angle) * length;
 
             OnPositionUpdate();
         }
 
-        public Action PosUpdate;
+    }
+    
+    public class Slider : Node
+    {
+        public double width = 20;
+        public double heigth = 10;
 
-        protected void OnPositionUpdate()
+        public Point center;
+        public double min =  -100.0;
+        public double max =  100.0;
+
+        private SliderType type = SliderType.Horizontal;
+        public SliderType Type
         {
-            if (PosUpdate != null)
-                PosUpdate();
+            get { return type; }
+            set { type = value; NotifyPropertyChanged("Type"); }
         }
 
+        public void SetPosition(Point newPos)
+        {
+            if(type == SliderType.Horizontal)
+            {
+                position.Y = center.Y;
+                position.X = newPos.X;
 
+                var dX = position.X - center.X;
+
+                if (dX > max)
+                    position.X = center.X + max;
+
+                if (dX < min)
+                    position.X = center.X + min;
+            }
+
+            OnPositionUpdate();
+        }
+
+        public void UpdateRelativePos()
+        {
+            if (Next != null)
+            {
+                if (Next is Leg)
+                {
+                    (Next as Leg).UpdateRelativePos();
+                }
+            }
+        }
     }
-
 }

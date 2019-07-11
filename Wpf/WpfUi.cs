@@ -13,9 +13,27 @@ using System.Collections;
 
 namespace Wpf
 {
+    public abstract class NodeShape
+    {
+        public event MouseButtonEventHandler MouseLeftButtonDown;
+        public event MouseButtonEventHandler MouseLeftButtonUp;
 
+        protected void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (MouseLeftButtonDown != null)
+                MouseLeftButtonDown(sender, e);
+        }
 
-    public class LegShape
+        protected void OnMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (MouseLeftButtonUp != null)
+                MouseLeftButtonUp(sender, e);
+        }
+
+        public abstract void Update();
+    }
+
+    public class LegShape: NodeShape
     {
         private Leg leg;
         public Leg Leg
@@ -27,9 +45,9 @@ namespace Wpf
         public Line line = new Line();
         public List<UIElement> uiList = new List<UIElement>();
 
-        public LegShape()
+        public LegShape(Leg leg)
         {
-            leg = new Leg();
+            this.leg = leg;
 
             point.Height = point.Width = 20;
             point.Fill = Brushes.Black;
@@ -41,18 +59,15 @@ namespace Wpf
             uiList.Add(point);
             uiList.Add(line);
 
-            point.MouseLeftButtonDown += (o, e) => { if (MouseLeftButtonDown != null) MouseLeftButtonDown(this, e); };
-            point.MouseLeftButtonUp += (o, e) => { if (MouseLeftButtonUp != null) MouseLeftButtonUp(this, e); };
+            point.MouseLeftButtonDown += (o, e) => { OnMouseLeftButtonDown(this, e); };
 
             leg.PosUpdate += Update;
+            Update();
         }
 
-        public event MouseButtonEventHandler MouseLeftButtonDown;
-        public event MouseButtonEventHandler MouseLeftButtonUp;
-
-        public void Update()
+        public override void Update()
         {
-           var  From = Leg.Prev.Position;
+            var From = Leg.Prev.Position;
             var To = Leg.Position;
 
             point.Margin = new Thickness(To.X - point.Width / 2, To.Y - point.Width / 2, 0, 0);
@@ -61,6 +76,42 @@ namespace Wpf
             line.Y1 = From.Y;
             line.X2 = To.X;
             line.Y2 = To.Y;
+        }
+    }
+
+    public class SliderShape : NodeShape
+    {
+        private Slider slider;
+        public Slider Slider
+        {
+            get { return slider; }
+        }
+
+        public Line line = new Line();
+        public Ellipse point = new Ellipse();
+
+        public SliderShape(Slider slider)
+        {
+            point.Height = point.Width = 20;
+            point.Fill = Brushes.Red;
+            point.Margin = new Thickness(30, 30, 0, 0);
+            point.MouseLeftButtonDown += (o, e) => { OnMouseLeftButtonDown(this, e); };
+
+            line.StrokeThickness = 5;
+            line.Stroke = Brushes.Red;
+
+            this.slider = slider;
+            slider.PosUpdate += Update;
+            Update();
+        }
+
+        public override void Update()
+        {
+            line.X1 = slider.center.X + slider.min;
+            line.X2 = slider.center.X + slider.max;
+            line.Y1 = line.Y2 = slider.center.Y;
+
+            point.Margin = new Thickness(slider.Position.X - point.Width / 2, slider.Position.Y - point.Width / 2, 0, 0);
         }
 
     }

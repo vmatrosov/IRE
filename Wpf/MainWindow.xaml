@@ -6,18 +6,38 @@
         xmlns:local="clr-namespace:Wpf"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <Canvas Grid.Column="0" Name="canvas" MouseMove="canvas_MouseMove" Background="AliceBlue">
-        </Canvas>
 
-        
+        <TabControl Grid.Column="0">
+            <TabItem Header="WPF">
+                <Canvas  Name="canvas" MouseMove="canvas_MouseMove" Background="AliceBlue">
+                </Canvas>
+            </TabItem>
+            <TabItem Header="OpenGL">
+                <WindowsFormsHost Name="wfh"/>
+            </TabItem>
+                
+        </TabControl>
+       
         <StackPanel Grid.Column="1" Orientation="Vertical">
-            <TextBlock Name="tbX" Width="100" />
-            <TextBlock Name="tbY" Width="100" />
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Mouse xy"/>
+                <TextBlock Name="tbX" Width="25" />
+                <TextBlock Name="tbY" Width="25" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Pixel rgb"/>
+                <TextBlock Name="tbPixR" Width="25" />
+                <TextBlock Name="tbPixG" Width="25" />
+                <TextBlock Name="tbPixB" Width="25" />
+                <TextBlock Name="tbPixA" Width="25" />
+            </StackPanel>
+
 
             <GroupBox Header="LEG" Name="gbLegData">
                 <StackPanel Orientation="Vertical">
@@ -39,10 +59,12 @@
                     </StackPanel>
                 </StackPanel>
             </GroupBox>
-            
+
 
         </StackPanel>
 
 
     </Grid>
+
+
 </Window>
