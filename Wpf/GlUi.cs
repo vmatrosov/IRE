@@ -62,7 +62,7 @@ namespace Wpf
             var mid = (leg.Position + leg.Prev.Position) / 2;
             mid = GlConverter.ToGlVector2(mid);
             GL.Translate(mid.X, mid.Y, 0);
-            GL.Rotate(-((float)leg.Angle - 90), Vector3.UnitZ);
+            GL.Rotate(((float)leg.Pitch), Vector3.UnitZ);
             GL.Scale((leg.Length - size) / 2, size/4, 1);
 
             GL.Begin(PrimitiveType.Polygon);

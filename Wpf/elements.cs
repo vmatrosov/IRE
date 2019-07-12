@@ -15,14 +15,12 @@ using OpenTK.Graphics.OpenGL;
 
 namespace Wpf
 {
-    static class Helper
-    {
-        public const double ToDeg = 180.0 / Math.PI;
-        public const double ToRad = Math.PI / 180.0;
-    }
 
     public class Node : INotifyPropertyChanged
     {
+        public const double ToDeg = 180.0 / Math.PI;
+        public const double ToRad = Math.PI / 180.0;
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected void NotifyPropertyChanged(String propertyName)
         {
@@ -53,6 +51,26 @@ namespace Wpf
             }
         }
 
+        protected double pitch = 0.0;
+        public virtual double Pitch
+        {
+            get
+            {
+                return pitch * ToDeg;
+            }
+            set
+            {
+                value = value % 360.0;
+                pitch = value * ToRad;
+                NotifyPropertyChanged("Pitch");
+            }
+        }
+
+        public virtual void UpdateRelativePos()
+        {
+
+        }
+
         public double X
         {
             get { return position.X; }
@@ -74,6 +92,21 @@ namespace Wpf
         {
             get; set;
         }
+
+        protected bool rigid;
+        public bool Rigid
+        {
+            get
+            {
+                return rigid;
+            }
+
+            set
+            {
+                rigid = value;
+                NotifyPropertyChanged("Rigid");
+            }
+        }
     }
 
     public class Leg : Node
@@ -92,40 +125,63 @@ namespace Wpf
             if (Prev != null)
                 Prev.Next = this;
 
-            Angle = angle_;
             Length = length_;
-
-            UpdatePos();
+            LinkedAngle = angle_;
         }
+
+
 
         private double length = 1.0;
         public double Length
         {
-            get { return length; }
-            set {
+            get
+            {
+                return length;
+            }
+            set
+            {
                 if (value > 0)
                 {
                     length = value;
                     NotifyPropertyChanged("Length");
+
+                    UpdatePos();
                 }
             }
         }
 
-        double angle = 0.0;
-        public double Angle
+        public override double Pitch
         {
             get
             {
-                return angle * Helper.ToDeg;
+                return base.Pitch;
             }
             set
             {
-                if(value >=0 && value < 360.0)
-                {
-                    angle = value * Helper.ToRad;
-                    NotifyPropertyChanged("Angle");
+                base.Pitch = value;
 
-                }
+                linkedAngle = (Pitch - Prev.Pitch) * ToRad;
+                UpdatePos();
+
+                NotifyPropertyChanged("LinkedAngle");
+            }
+        }
+
+        double linkedAngle = 0.0;
+        public double LinkedAngle
+        {
+            get
+            {
+                return linkedAngle * ToDeg;
+            }
+            set
+            {
+                linkedAngle = value * ToRad;
+                pitch = (Prev.Pitch + value) * ToRad;
+                UpdatePos();
+
+                NotifyPropertyChanged("LinkedAngle");
+                NotifyPropertyChanged("Pitch");
             }
         }
 
@@ -136,38 +192,30 @@ namespace Wpf
             NotifyPropertyChanged("Position");
         }
 
-        public void UpdateRelativePos()
+        private void UpdatePos()
         {
-            var dist = Math.Sqrt(Math.Pow(position.Y - Prev.Position.Y, 2) + Math.Pow(position.X - Prev.Position.X, 2));
-
-            angle = Math.Acos((position.Y - Prev.Position.Y) / dist);
-
-            if (position.X < Prev.Position.X)
-                angle += Math.PI;
-
-            NotifyPropertyChanged("Angle");
-
-            UpdatePos();
-
-            if (Next != null)
-            {
-                if (Next is Leg)
-                {
-                    (Next as Leg).UpdateRelativePos();
-                }
-            }
-        }
-
-        public void UpdatePos()
-        {
-            position.X = ( Prev.Position.X + Math.Sin(angle) * length);
-            position.Y = (Prev.Position.Y + Math.Cos(angle) * length);
-
+            position.X = (Prev.Position.X + Math.Cos(pitch) * length);
+            position.Y = (Prev.Position.Y + Math.Sin(pitch) * length);
             OnPositionUpdate();
         }
 
+        public override void UpdateRelativePos()
+        {
+            if (Rigid)
+            {
+                Pitch = Prev.Pitch + LinkedAngle;
+            }
+            else
+            {
+                var dxy = Position - Prev.Position;
+                Pitch = Math.Acos(dxy.X / dxy.Length) * Math.Sign(dxy.Y) * ToDeg;                
+            }
+
+            if (Next != null)
+                Next.UpdateRelativePos();
+        }
     }
-    
+
     public class Slider : Node
     {
         public double width = 100;
@@ -177,29 +225,24 @@ namespace Wpf
 
         public void SetPosition(Vector2d newPos)
         {
-                position.Y = center.Y;
-                position.X = newPos.X;
+            position.Y = center.Y;
+            position.X = newPos.X;
 
-                var dX = position.X - center.X;
+            var dX = position.X - center.X;
 
-                if (dX > width)
-                    position.X = center.X + width;
+            if (dX > width)
+                position.X = center.X + width;
 
-                if (dX < -width)
-                    position.X = center.X - width;
+            if (dX < -width)
+                position.X = center.X - width;
 
             OnPositionUpdate();
         }
 
-        public void UpdateRelativePos()
+        public override void UpdateRelativePos()
         {
             if (Next != null)
-            {
-                if (Next is Leg)
-                {
-                    (Next as Leg).UpdateRelativePos();
-                }
-            }
+                Next.UpdateRelativePos();
         }
     }
 }

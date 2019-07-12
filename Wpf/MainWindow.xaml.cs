@@ -13,7 +13,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-
 using System.Windows.Forms;
 
 using OpenTK;
@@ -60,10 +59,13 @@ namespace Wpf
         Slider slider;
         List<NodeShape> shapeList = new List<NodeShape>();
         List<NodeGlShape> glList = new List<NodeGlShape>();
+        PropertyGrid pGrid = new PropertyGrid();
 
         public MainWindow()
         {
             InitializeComponent();
+
+            //wfhPropViewer.Child = pGrid;
 
             // WPF
             canvas.MouseLeftButtonUp += ShapeMouseLeftButtonUp;
@@ -85,9 +87,14 @@ namespace Wpf
             slider.Position = slider.center = new Vector2d(200, 200);
             AddShapeToCanves(new SliderShape(slider));
             glList.Add(new SliderGlShape(slider));
+
+            PosA.DataContext = slider;
+            PosB.DataContext = AddLeg(slider, -45);
+            PosC.DataContext = AddLeg(slider, 45);
+            PosD.DataContext = AddLeg(slider, 45);
         }
 
-        void rendertriangle()
+        void Draw()
         {
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
@@ -136,26 +143,31 @@ namespace Wpf
             }
         }
 
-        void AddLeg(Node parent)
+        Leg AddLeg(Node parent, double angle)
         {
             while (parent.Next != null)
                 parent = parent.Next;
 
-            var leg = new Leg(parent, 45, 100);
+            var leg = new Leg(parent, angle, 100);
 
             parent.Next = leg;
             AddShapeToCanves(new LegShape(leg));
             glList.Add(new LegGlShape(leg));
+
+            return leg;
         }
 
         void RemoveLeg(Node n)
         {
             while (n.Next != null)
                 n = n.Next;
-            n.Prev.Next = null;
 
-            RemoveLegShape(shapeList.Where(e => e.Node == n).First());
-            glList.Remove(glList.Where(e => e.Node == n).First());
+            if (n.Prev != null)
+            {
+                n.Prev.Next = null;
+                RemoveLegShape(shapeList.Where(e => e.Node == n).First());
+                glList.Remove(glList.Where(e => e.Node == n).First());
+            }
         }
 
         #region WPF event
@@ -256,7 +268,7 @@ namespace Wpf
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            AddLeg(slider);
+            AddLeg(slider, 0);
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -279,12 +291,29 @@ namespace Wpf
                 ClearBufferMask.DepthBufferBit |
                 ClearBufferMask.StencilBufferBit);
 
-            rendertriangle();
+            Draw();
 
             glControl.SwapBuffers();
         }
 
         #endregion
+
+        private void RigidSystem_Checked(object sender, RoutedEventArgs e)
+        {
+            if(cbRigidSystem.IsChecked.HasValue)
+            {
+                Node n = slider;
+                while (n != null)
+                {
+                    n.Rigid = cbRigidSystem.IsChecked.Value;
+                    n = n.Next;
+
+                }
+            }
+
+
+        }
     }
+
 }
 

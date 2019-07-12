@@ -25,8 +25,8 @@
         </TabControl>
        
         <StackPanel Grid.Column="1" Orientation="Vertical">
-            <Button Content="ADD LEG" Click="Button_Click"/>
-            <Button Content="REMOVE LEG" Click="Button_Click_1"/>
+            <Button Content="ADD LEG" Visibility="Hidden" Click="Button_Click"/>
+            <Button Content="REMOVE LEG" Visibility="Hidden" Click="Button_Click_1"/>
             <GroupBox Header="Mouse">
                 <StackPanel Orientation="Vertical">
                     <StackPanel Orientation="Horizontal">
@@ -42,11 +42,12 @@
                     </StackPanel>
                 </StackPanel>
             </GroupBox>
-            <GroupBox Header="LEG" Name="gbLegData">
+            <CheckBox Name="cbRigidSystem" Content="Rigid" Checked="RigidSystem_Checked"/>
+            <GroupBox Header="Leg" Name="gbLegData">
                 <StackPanel Orientation="Vertical">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="x:" />
-                        <TextBox Name="legX" Width="100" Text="{Binding Path=X}" />
+                        <TextBox Name="legX" Width="100" Text="{Binding Path=Position.X}" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="y:" />
@@ -58,11 +59,44 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="ang:" />
-                        <TextBox Name="legAng" Width="100" Text="{Binding Path=Angle}"/>
+                        <TextBox Name="legAng" Width="100" Text="{Binding Path=Pitch}"/>
                     </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Link ang:" />
+                        <TextBox Width="100" Text="{Binding Path=LinkedAngle}"/>
+                    </StackPanel>
+                    <CheckBox Content="Rigid" IsChecked="{Binding Rigid}"/>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Name="PosA" Header="Position A">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="X Y "/>
+                    <TextBlock Text="{Binding Path=X}"/>
+                    <TextBlock Text="{Binding Path=Y}"/>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Name="PosB" Header="Position B">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="X Y "/>
+                    <TextBlock Text="{Binding Path=X}"/>
+                    <TextBlock Text="{Binding Path=Y}"/>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Name="PosC" Header="Position C">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="X Y "/>
+                    <TextBlock Text="{Binding Path=X}"/>
+                    <TextBlock Text="{Binding Path=Y}"/>
                 </StackPanel>
             </GroupBox>
 
+            <GroupBox Name="PosD" Header="Position D">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="X Y "/>
+                    <TextBlock Text="{Binding Path=X}"/>
+                    <TextBlock Text="{Binding Path=Y}"/>
+                </StackPanel>
+            </GroupBox>
 
         </StackPanel>
 
