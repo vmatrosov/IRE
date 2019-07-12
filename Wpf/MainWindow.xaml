@@ -27,7 +27,7 @@
         <StackPanel Grid.Column="1" Orientation="Vertical">
             <Button Content="ADD LEG" Visibility="Hidden" Click="Button_Click"/>
             <Button Content="REMOVE LEG" Visibility="Hidden" Click="Button_Click_1"/>
-            <GroupBox Header="Mouse">
+            <GroupBox Header="Mouse" Visibility="Collapsed">
                 <StackPanel Orientation="Vertical">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Pos xy:  "/>
@@ -42,16 +42,17 @@
                     </StackPanel>
                 </StackPanel>
             </GroupBox>
-            <CheckBox Name="cbRigidSystem" Content="Rigid" Checked="RigidSystem_Checked"/>
-            <GroupBox Header="Leg" Name="gbLegData">
+            <CheckBox Name="cbRigidSystem" Content="Rigid all" Click="cbRigidSystem_Click"/>
+           
+            <GroupBox Header="Active Leg"  Visibility="Hidden" Name="gbLegData">
                 <StackPanel Orientation="Vertical">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="x:" />
-                        <TextBox Name="legX" Width="100" Text="{Binding Path=Position.X}" />
+                        <TextBox Name="legX" Width="100" Text="{Binding Path=X, StringFormat=\{0:F2\}, Mode=OneWay}" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="y:" />
-                        <TextBox Name="legY" Width="100" Text="{Binding Path=Y}" />
+                        <TextBox Name="legY" Width="100" Text="{Binding Path=Y, StringFormat=\{0:F2\}, Mode=OneWay}" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="dist:" />
@@ -65,39 +66,48 @@
                         <TextBlock Text="Link ang:" />
                         <TextBox Width="100" Text="{Binding Path=LinkedAngle}"/>
                     </StackPanel>
-                    <CheckBox Content="Rigid" IsChecked="{Binding Rigid}"/>
+
                 </StackPanel>
             </GroupBox>
+            
             <GroupBox Name="PosA" Header="Position A">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="X Y "/>
-                    <TextBlock Text="{Binding Path=X}"/>
-                    <TextBlock Text="{Binding Path=Y}"/>
+                    <TextBlock Text="X: "/>
+                    <TextBlock Text="{Binding Path=X, StringFormat=\{0:F2\}, Mode=OneWay }"/>
+                    <TextBlock Text="Y: "/>
+                    <TextBlock Text="{Binding Path=Y , StringFormat=\{0:F2\}, Mode=OneWay}"/>
+                    <CheckBox Content="Rigid" IsChecked="{Binding Rigid}"/>
                 </StackPanel>
             </GroupBox>
             <GroupBox Name="PosB" Header="Position B">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="X Y "/>
-                    <TextBlock Text="{Binding Path=X}"/>
-                    <TextBlock Text="{Binding Path=Y}"/>
+                    <TextBlock Text="X: "/>
+                    <TextBlock Text="{Binding Path=X, StringFormat=\{0:F2\}, Mode=OneWay }"/>
+                    <TextBlock Text="Y: "/>
+                    <TextBlock Text="{Binding Path=Y , StringFormat=\{0:F2\}, Mode=OneWay}"/>
+                    <CheckBox Content="Rigid" IsChecked="{Binding Rigid}"/>
                 </StackPanel>
             </GroupBox>
             <GroupBox Name="PosC" Header="Position C">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="X Y "/>
-                    <TextBlock Text="{Binding Path=X}"/>
-                    <TextBlock Text="{Binding Path=Y}"/>
+                    <TextBlock Text="X: "/>
+                    <TextBlock Text="{Binding Path=X, StringFormat=\{0:F2\}, Mode=OneWay }"/>
+                    <TextBlock Text="Y: "/>
+                    <TextBlock Text="{Binding Path=Y , StringFormat=\{0:F2\}, Mode=OneWay}"/>
+                    <CheckBox Content="Rigid" IsChecked="{Binding Rigid}"/>
                 </StackPanel>
             </GroupBox>
 
             <GroupBox Name="PosD" Header="Position D">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="X Y "/>
-                    <TextBlock Text="{Binding Path=X}"/>
-                    <TextBlock Text="{Binding Path=Y}"/>
+                    <TextBlock Text="X: "/>
+                    <TextBlock Text="{Binding Path=X, StringFormat=\{0:F2\}, Mode=OneWay}"/>
+                    <TextBlock Text="Y: "/>
+                    <TextBlock Text="{Binding Path=Y , StringFormat=\{0:F2\}, Mode=OneWay}"/>
+                    <CheckBox Content="Rigid" IsChecked="{Binding Rigid}"/>
                 </StackPanel>
             </GroupBox>
-
+            <CheckBox Content="Rigid all" IsChecked="{Binding Rigid}"/>
         </StackPanel>
 
 

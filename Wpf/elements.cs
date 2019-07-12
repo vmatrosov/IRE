@@ -48,6 +48,8 @@ namespace Wpf
             {
                 position = value;
                 NotifyPropertyChanged("Position");
+                NotifyPropertyChanged("X");
+                NotifyPropertyChanged("Y");
             }
         }
 
@@ -66,7 +68,12 @@ namespace Wpf
             }
         }
 
-        public virtual void UpdateRelativePos()
+        public virtual void UpdateRelativePos(bool rigid)
+        {
+
+        }
+
+        public virtual void SetPosition(Vector2d newPos)
         {
 
         }
@@ -74,13 +81,22 @@ namespace Wpf
         public double X
         {
             get { return position.X; }
-            set { position.X = value; }
+            set {
+
+                position.X = value;
+                NotifyPropertyChanged("X");
+            }
         }
 
         public double Y
         {
             get { return position.Y; }
-            set { position.Y = value; }
+            set
+            {
+
+                position.Y = value;
+                NotifyPropertyChanged("Y");
+            }
         }
 
         public Node Prev
@@ -185,23 +201,23 @@ namespace Wpf
             }
         }
 
-        public void SetPosition(Vector2d newPos)
+        public override void SetPosition(Vector2d newPos)
         {
             position = newPos;
-            UpdateRelativePos();
+            UpdateRelativePos(false);
             NotifyPropertyChanged("Position");
         }
 
         private void UpdatePos()
         {
-            position.X = (Prev.Position.X + Math.Cos(pitch) * length);
-            position.Y = (Prev.Position.Y + Math.Sin(pitch) * length);
+            X = (Prev.Position.X + Math.Cos(pitch) * length);
+            Y = (Prev.Position.Y + Math.Sin(pitch) * length);
             OnPositionUpdate();
         }
 
-        public override void UpdateRelativePos()
+        public override void UpdateRelativePos(bool rigid_)
         {
-            if (Rigid)
+            if (rigid_)
             {
                 Pitch = Prev.Pitch + LinkedAngle;
             }
@@ -212,7 +228,7 @@ namespace Wpf
             }
 
             if (Next != null)
-                Next.UpdateRelativePos();
+                Next.UpdateRelativePos(rigid);
         }
     }
 
@@ -223,7 +239,7 @@ namespace Wpf
 
         public Vector2d center;
 
-        public void SetPosition(Vector2d newPos)
+        public override void SetPosition(Vector2d newPos)
         {
             position.Y = center.Y;
             position.X = newPos.X;
@@ -239,10 +255,10 @@ namespace Wpf
             OnPositionUpdate();
         }
 
-        public override void UpdateRelativePos()
+        public override void UpdateRelativePos(bool rigid_)
         {
             if (Next != null)
-                Next.UpdateRelativePos();
+                Next.UpdateRelativePos(rigid);
         }
     }
 }

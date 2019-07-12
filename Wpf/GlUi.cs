@@ -68,10 +68,10 @@ namespace Wpf
             GL.Begin(PrimitiveType.Polygon);
 
             GL.Color3(System.Drawing.Color.Green);
-            GL.Vertex2(1, 1);
-            GL.Vertex2(1, -1);
-            GL.Vertex2(-1, -1);
-            GL.Vertex2(-1, 1);
+            GL.Vertex3(1, 1, -1);
+            GL.Vertex3(1, -1, -1);
+            GL.Vertex3(-1, -1, -1);
+            GL.Vertex3(-1, 1, -1);
 
             GL.End();
 
@@ -87,7 +87,7 @@ namespace Wpf
             double angle = 0.0;
             while (angle < Math.PI * 2)
             {               
-                GL.Vertex2(size * Math.Sin(angle), size * Math.Cos(angle));
+                GL.Vertex3(size * Math.Sin(angle), size * Math.Cos(angle), -2);
                 angle += step;
             }
             GL.End();

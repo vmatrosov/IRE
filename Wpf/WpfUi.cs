@@ -41,7 +41,7 @@ namespace Wpf
                 MouseLeftButtonUp(sender, e);
         }
 
-        public abstract void Update();
+        public abstract void Update(); 
     }
 
     public class LegShape: NodeShape

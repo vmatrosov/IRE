@@ -181,18 +181,8 @@ namespace Wpf
 
             if (captNodeShape != null)
             {
-                if (captNodeShape is LegShape)
-                {
-                    (captNodeShape as LegShape).Leg.SetPosition(new Vector2d(pos.X, pos.Y));
-                    (captNodeShape as LegShape).Leg.UpdateRelativePos();
-                }
-
-                if (captNodeShape is SliderShape)
-                {
-                    (captNodeShape as SliderShape).Slider.SetPosition(new Vector2d(pos.X, pos.Y));
-                    (captNodeShape as SliderShape).Slider.UpdateRelativePos();
-                }
-
+                (captNodeShape).Node.SetPosition(new Vector2d(pos.X, pos.Y));
+                (captNodeShape).Node.UpdateRelativePos(false);
             }
         }
 
@@ -219,17 +209,8 @@ namespace Wpf
         {
             if (captGlShape != null)
             {
-                if (captGlShape is LegGlShape)
-                {
-                    (captGlShape as LegGlShape).Leg.SetPosition(new Vector2d(e.X, e.Y));
-                    (captGlShape as LegGlShape).Leg.UpdateRelativePos();
-                }
-
-                if (captGlShape is SliderGlShape)
-                {
-                    (captGlShape as SliderGlShape).Slider.SetPosition(new Vector2d(e.X, e.Y));
-                    (captGlShape as SliderGlShape).Slider.UpdateRelativePos();
-                }
+                (captGlShape).Node.SetPosition(new Vector2d(e.X, e.Y));
+                (captGlShape).Node.UpdateRelativePos(false);
 
                 glControl.Invalidate();
             }
@@ -298,9 +279,9 @@ namespace Wpf
 
         #endregion
 
-        private void RigidSystem_Checked(object sender, RoutedEventArgs e)
+        private void cbRigidSystem_Click(object sender, RoutedEventArgs e)
         {
-            if(cbRigidSystem.IsChecked.HasValue)
+            if (cbRigidSystem.IsChecked.HasValue)
             {
                 Node n = slider;
                 while (n != null)
@@ -310,8 +291,6 @@ namespace Wpf
 
                 }
             }
-
-
         }
     }
 
