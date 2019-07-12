@@ -107,8 +107,8 @@ namespace Wpf
 
         public override void Update()
         {
-            line.X1 = slider.center.X + slider.min;
-            line.X2 = slider.center.X + slider.max;
+            line.X1 = slider.center.X + slider.width;
+            line.X2 = slider.center.X - slider.width;
             line.Y1 = line.Y2 = slider.center.Y;
 
             point.Margin = new Thickness(slider.Position.X - point.Width / 2, slider.Position.Y - point.Width / 2, 0, 0);

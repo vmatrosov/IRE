@@ -9,6 +9,10 @@ using System.Windows.Shapes;
 using System.Windows.Controls;
 using System.Windows.Media;
 
+using OpenTK;
+using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
+
 namespace Wpf
 {
     static class Helper
@@ -34,9 +38,8 @@ namespace Wpf
             }
         }
 
-        protected Point position;
-
-        public Point Position
+        protected Vector2d position;
+        public Vector2d Position
         {
             get
             {
@@ -116,7 +119,7 @@ namespace Wpf
             }
         }
 
-        public double angle = 0.0;
+        double angle = 0.0;
         public double Angle
         {
             get
@@ -134,7 +137,7 @@ namespace Wpf
             }
         }
 
-        public void SetPosition(Point newPos)
+        public void SetPosition(Vector2d newPos)
         {
             position = newPos;
             UpdateRelativePos();
@@ -165,8 +168,8 @@ namespace Wpf
 
         public void UpdatePos()
         {
-            position.X = Prev.Position.X + Math.Sin(angle) * length;
-            position.Y = Prev.Position.Y + Math.Cos(angle) * length;
+            position.X = ( Prev.Position.X + Math.Sin(angle) * length);
+            position.Y = (Prev.Position.Y + Math.Cos(angle) * length);
 
             OnPositionUpdate();
         }
@@ -175,12 +178,10 @@ namespace Wpf
     
     public class Slider : Node
     {
-        public double width = 20;
+        public double width = 100;
         public double heigth = 10;
 
-        public Point center;
-        public double min =  -100.0;
-        public double max =  100.0;
+        public Vector2d center;
 
         private SliderType type = SliderType.Horizontal;
         public SliderType Type
@@ -189,7 +190,7 @@ namespace Wpf
             set { type = value; NotifyPropertyChanged("Type"); }
         }
 
-        public void SetPosition(Point newPos)
+        public void SetPosition(Vector2d newPos)
         {
             if(type == SliderType.Horizontal)
             {
@@ -198,11 +199,11 @@ namespace Wpf
 
                 var dX = position.X - center.X;
 
-                if (dX > max)
-                    position.X = center.X + max;
+                if (dX > width)
+                    position.X = center.X + width;
 
-                if (dX < min)
-                    position.X = center.X + min;
+                if (dX < -width)
+                    position.X = center.X - width;
             }
 
             OnPositionUpdate();

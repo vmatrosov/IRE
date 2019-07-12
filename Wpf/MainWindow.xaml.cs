@@ -26,20 +26,20 @@ namespace Wpf
         public static float width = 0;
         public static float heigth = 0;
 
-        public static Vector2 ToGlCoord(Point p)
+        public static Vector2d ToGlCoord(Vector2d p)
         {
             float halfWidth = width / 2;
             float halfHeigth = heigth / 2;
 
-            return new Vector2((float)(p.X - halfWidth) / halfWidth, -(float)(p.Y - halfHeigth) / halfHeigth);
+            return new Vector2d((p.X - halfWidth), (p.Y - halfHeigth));
         }
 
-        public static Point ToWpfwCoord(Vector2 p)
+        public static Point ToWpfCoord(Vector2 p)
         {
             double halfWidth = width / 2;
             double halfHeigth = heigth / 2;
 
-            return new Point(p.X * halfWidth + halfWidth, p.Y + halfHeigth * -halfHeigth);
+            return new Point(p.X + halfWidth, p.Y + halfHeigth);
         }
     }
 
@@ -51,16 +51,17 @@ namespace Wpf
         NodeShape captureEl = null;
         GLControl glControl;
         LegGl lg1, lg2, lg3;
+        SliderGl slgl;
 
-        Dictionary<int, LegGl> glObjects = new Dictionary<int, LegGl>();
-        LegGl captureGl = null;
+        Dictionary<int, GlShape> glObjects = new Dictionary<int, GlShape>();
+        GlShape captureGl = null;
 
         public MainWindow()
         {
             InitializeComponent();
             
             Slider sl = new Slider();
-            sl.Position = sl.center = new Point(200, 200);
+            sl.Position = sl.center = new Vector2d(200, 200);
 
             Leg leg1 = new Leg(sl, 90, 100);
             Leg leg2 = new Leg(leg1, 90, 100);
@@ -71,10 +72,12 @@ namespace Wpf
             LegShape ls2 = new LegShape(leg2);
             LegShape ls3 = new LegShape(leg3);
 
+            slgl = new SliderGl(sl);
             lg1 = new LegGl(leg1);
             lg2 = new LegGl(leg2);
             lg3 = new LegGl(leg3);
 
+            glObjects.Add(slgl.red, slgl);
             glObjects.Add(lg1.red, lg1);
             glObjects.Add(lg2.red, lg2);
             glObjects.Add(lg3.red, lg3);
@@ -104,8 +107,19 @@ namespace Wpf
         {
             if(captureGl != null)
             {
-                captureGl.Leg.SetPosition(new Point(e.X, e.Y));
-                captureGl.Leg.UpdateRelativePos();
+                if(captureGl is LegGl)
+                {
+                    (captureGl as LegGl) .Leg.SetPosition(new Vector2d(e.X, e.Y));
+                    (captureGl as LegGl).Leg.UpdateRelativePos();
+                }
+
+                if(captureGl  is SliderGl)
+                {
+                    (captureGl as SliderGl).Slider.SetPosition(new Vector2d(e.X, e.Y));
+                    (captureGl as SliderGl).Slider.UpdateRelativePos();
+                }
+
+
 
                 glControl.Invalidate();
             }
@@ -169,19 +183,10 @@ namespace Wpf
 
             float halfWidth = (float)(glControl.Width / 2);
             float halfHeight = (float)(glControl.Height / 2);
-            //GL.Ortho(-halfWidth, halfWidth, halfHeight, -halfHeight, 1000, -1000);
-            GL.Ortho(-1.0, 1.0, -1.0, 1.0, 0.0, 4.0);
+            GL.Ortho(-halfWidth, halfWidth, halfHeight, -halfHeight, 1000, -1000);
             GL.Viewport(glControl.Size);
 
-            //GL.Begin(PrimitiveType.Triangles);
-            //GL.Color3(255, 0, 0);
-            //GL.Vertex2(-1.0f, 1.0f);
-            //GL.Color3(System.Drawing.Color.SpringGreen);
-            //GL.Vertex2(0.0f, -1.0f);
-            //GL.Color3(System.Drawing.Color.Ivory);
-            //GL.Vertex2(1.0f, 1.0f);
-            //GL.End();
-
+            slgl.Draw();
             lg1.Draw();
             lg2.Draw();
             lg3.Draw();
@@ -209,6 +214,7 @@ namespace Wpf
         private void canvas_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
             var pos = e.GetPosition(sender as Canvas);
+
             tbX.Text = pos.X.ToString();
             tbY.Text = pos.Y.ToString();
 
@@ -216,13 +222,13 @@ namespace Wpf
             {
                 if (captureEl is LegShape)
                 {
-                    (captureEl as LegShape).Leg.SetPosition( pos);
+                    (captureEl as LegShape).Leg.SetPosition( new Vector2d(pos.X, pos.Y));
                     (captureEl as LegShape).Leg.UpdateRelativePos();
                 }
 
                 if (captureEl is SliderShape)
                 {
-                    (captureEl as SliderShape).Slider.SetPosition( pos);
+                    (captureEl as SliderShape).Slider.SetPosition(new Vector2d(pos.X, pos.Y));
                     (captureEl as SliderShape).Slider.UpdateRelativePos();
                 }
 
