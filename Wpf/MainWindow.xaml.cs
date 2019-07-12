@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+
 using System.Windows.Forms;
 
 using OpenTK;
@@ -51,83 +52,172 @@ namespace Wpf
         }
     }
 
-    /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
-        NodeShape captureEl = null;
+        NodeShape captNodeShape = null;
+        NodeGlShape captGlShape = null;
         GLControl glControl;
-        LegGl lg1, lg2, lg3;
-        SliderGl slgl;
-
-        Dictionary<int, GlShape> glObjects = new Dictionary<int, GlShape>();
-        GlShape captureGl = null;
+        Slider slider;
+        List<NodeShape> shapeList = new List<NodeShape>();
+        List<NodeGlShape> glList = new List<NodeGlShape>();
 
         public MainWindow()
         {
             InitializeComponent();
-            
-            Slider sl = new Slider();
-            sl.Position = sl.center = new Vector2d(200, 200);
 
-            Leg leg1 = new Leg(sl, 90, 100);
-            Leg leg2 = new Leg(leg1, 90, 100);
-            Leg leg3 = new Leg(leg2, 90, 100);
+            // WPF
+            canvas.MouseLeftButtonUp += ShapeMouseLeftButtonUp;
 
-            SliderShape sls = new SliderShape(sl);
-            LegShape ls1 = new LegShape(leg1);
-            LegShape ls2 = new LegShape(leg2);
-            LegShape ls3 = new LegShape(leg3);
-
-            slgl = new SliderGl(sl);
-            lg1 = new LegGl(leg1);
-            lg2 = new LegGl(leg2);
-            lg3 = new LegGl(leg3);
-
-            glObjects.Add(slgl.red, slgl);
-            glObjects.Add(lg1.red, lg1);
-            glObjects.Add(lg2.red, lg2);
-            glObjects.Add(lg3.red, lg3);
-
-            AddLegShape(sls);
-            AddLegShape(ls1);
-            AddLegShape(ls2);
-            AddLegShape(ls3);
-
-            canvas.MouseLeftButtonUp += Ellipse_MouseLeftButtonUp;
-
+            // GL
             var flags = GraphicsContextFlags.Default;
             glControl = new GLControl(new GraphicsMode(32, 24), 2, 0, flags);
             glControl.MakeCurrent();
             glControl.Paint += GlControl_Paint;
             glControl.Dock = DockStyle.Fill;
             wfh.Child = glControl;
-
-            
-            glControl.Resize += GlControl_Resize;           
+            glControl.Resize += GlControl_Resize;
             glControl.MouseDown += GlControl_MouseClick;
             glControl.MouseUp += GlControl_MouseUp;
             glControl.MouseMove += GlControl_MouseMove;
+
+            // MODEL
+            slider = new Slider();
+            slider.Position = slider.center = new Vector2d(200, 200);
+            AddShapeToCanves(new SliderShape(slider));
+            glList.Add(new SliderGlShape(slider));
         }
+
+        void rendertriangle()
+        {
+            GL.MatrixMode(MatrixMode.Projection);
+            GL.LoadIdentity();
+
+            float halfWidth = (float)(glControl.Width / 2);
+            float halfHeight = (float)(glControl.Height / 2);
+            GL.Ortho(-halfWidth, halfWidth, halfHeight, -halfHeight, 1000, -1000);
+            GL.Viewport(glControl.Size);
+
+            foreach (var v in glList)
+                v.Draw();
+        }
+
+        void AddShapeToCanves(NodeShape ns)
+        {
+            shapeList.Add(ns);
+
+            if (ns is LegShape)
+            {
+                canvas.Children.Add((ns as LegShape).line);
+                canvas.Children.Add((ns as LegShape).point);
+            }
+
+            if (ns is SliderShape)
+            {
+                canvas.Children.Add((ns as SliderShape).line);
+                canvas.Children.Add((ns as SliderShape).point);
+            }
+
+            ns.MouseLeftButtonDown += ShapeMouseLeftButtonDown;
+            ns.MouseLeftButtonUp += ShapeMouseLeftButtonUp;
+        }
+
+        void RemoveLegShape(NodeShape ns)
+        {
+            if (ns is LegShape)
+            {
+                canvas.Children.Remove((ns as LegShape).line);
+                canvas.Children.Remove((ns as LegShape).point);
+            }
+
+            if (ns is SliderShape)
+            {
+                canvas.Children.Remove((ns as SliderShape).line);
+                canvas.Children.Remove((ns as SliderShape).point);
+            }
+        }
+
+        void AddLeg(Node parent)
+        {
+            while (parent.Next != null)
+                parent = parent.Next;
+
+            var leg = new Leg(parent, 45, 100);
+
+            parent.Next = leg;
+            AddShapeToCanves(new LegShape(leg));
+            glList.Add(new LegGlShape(leg));
+        }
+
+        void RemoveLeg(Node n)
+        {
+            while (n.Next != null)
+                n = n.Next;
+            n.Prev.Next = null;
+
+            RemoveLegShape(shapeList.Where(e => e.Node == n).First());
+            glList.Remove(glList.Where(e => e.Node == n).First());
+        }
+
+        #region WPF event
+
+        private void canvas_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            var pos = e.GetPosition(sender as Canvas);
+
+            tbX.Text = pos.X.ToString();
+            tbY.Text = pos.Y.ToString();
+
+            if (captNodeShape != null)
+            {
+                if (captNodeShape is LegShape)
+                {
+                    (captNodeShape as LegShape).Leg.SetPosition(new Vector2d(pos.X, pos.Y));
+                    (captNodeShape as LegShape).Leg.UpdateRelativePos();
+                }
+
+                if (captNodeShape is SliderShape)
+                {
+                    (captNodeShape as SliderShape).Slider.SetPosition(new Vector2d(pos.X, pos.Y));
+                    (captNodeShape as SliderShape).Slider.UpdateRelativePos();
+                }
+
+            }
+        }
+
+        private void ShapeMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            captNodeShape = sender as NodeShape;
+
+            if (sender is LegShape)
+            {
+                gbLegData.DataContext = (sender as LegShape).Leg;
+            }
+        }
+
+        private void ShapeMouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            captNodeShape = null;
+        }
+
+        #endregion
+
+        #region GL event
 
         private void GlControl_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            if(captureGl != null)
+            if (captGlShape != null)
             {
-                if(captureGl is LegGl)
+                if (captGlShape is LegGlShape)
                 {
-                    (captureGl as LegGl) .Leg.SetPosition(new Vector2d(e.X, e.Y));
-                    (captureGl as LegGl).Leg.UpdateRelativePos();
+                    (captGlShape as LegGlShape).Leg.SetPosition(new Vector2d(e.X, e.Y));
+                    (captGlShape as LegGlShape).Leg.UpdateRelativePos();
                 }
 
-                if(captureGl  is SliderGl)
+                if (captGlShape is SliderGlShape)
                 {
-                    (captureGl as SliderGl).Slider.SetPosition(new Vector2d(e.X, e.Y));
-                    (captureGl as SliderGl).Slider.UpdateRelativePos();
+                    (captGlShape as SliderGlShape).Slider.SetPosition(new Vector2d(e.X, e.Y));
+                    (captGlShape as SliderGlShape).Slider.UpdateRelativePos();
                 }
-
-
 
                 glControl.Invalidate();
             }
@@ -135,7 +225,7 @@ namespace Wpf
 
         private void GlControl_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            captureGl = null;
+            captGlShape = null;
         }
 
         private void GlControl_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
@@ -156,25 +246,29 @@ namespace Wpf
                 tbPixR.Text = pixels[0].ToString();
                 tbPixG.Text = pixels[1].ToString();
                 tbPixB.Text = pixels[2].ToString();
-                tbPixA.Text = pixels[3].ToString();
 
-                var res = glObjects.TryGetValue(pixels[0], out captureGl);
-
-                if (captureGl != null)
-                    if (captureGl is LegGl)
-                {
-                    gbLegData.DataContext = (captureGl as LegGl).Leg;
-                }
+                captGlShape = glList.Where(ee => ee.HashColor == pixels[0]).FirstOrDefault();
+                if (captGlShape != null)
+                    if (captGlShape is LegGlShape)
+                        gbLegData.DataContext = (captGlShape as LegGlShape).Leg;
             }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            AddLeg(slider);
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            RemoveLeg(slider);
         }
 
         private void GlControl_Resize(object sender, EventArgs e)
         {
-            GlConverter.heigth = (sender as GLControl).Height ;
+            GlConverter.heigth = (sender as GLControl).Height;
             GlConverter.width = (sender as GLControl).Width;
         }
-
-
 
         private void GlControl_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
         {
@@ -190,79 +284,7 @@ namespace Wpf
             glControl.SwapBuffers();
         }
 
-        void rendertriangle()
-        {
-            GL.MatrixMode(MatrixMode.Projection);
-            GL.LoadIdentity();
-
-            float halfWidth = (float)(glControl.Width / 2);
-            float halfHeight = (float)(glControl.Height / 2);
-            GL.Ortho(-halfWidth, halfWidth, halfHeight, -halfHeight, 1000, -1000);
-            GL.Viewport(glControl.Size);
-
-            slgl.Draw();
-            lg1.Draw();
-            lg2.Draw();
-            lg3.Draw();
-        }
-
-        void AddLegShape(NodeShape ns)
-        {
-
-            if (ns is LegShape)
-            {
-                canvas.Children.Add((ns as LegShape).line);
-                canvas.Children.Add((ns as LegShape).point);
-            }
-
-            if (ns is SliderShape)
-            {
-                canvas.Children.Add((ns as SliderShape).line);
-                canvas.Children.Add((ns as SliderShape).point);
-            }
-
-            ns.MouseLeftButtonDown += Ellipse_MouseLeftButtonDown;
-            ns.MouseLeftButtonUp += Ellipse_MouseLeftButtonUp;
-        }
-
-        private void canvas_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            var pos = e.GetPosition(sender as Canvas);
-
-            tbX.Text = pos.X.ToString();
-            tbY.Text = pos.Y.ToString();
-
-            if (captureEl != null)
-            {
-                if (captureEl is LegShape)
-                {
-                    (captureEl as LegShape).Leg.SetPosition( new Vector2d(pos.X, pos.Y));
-                    (captureEl as LegShape).Leg.UpdateRelativePos();
-                }
-
-                if (captureEl is SliderShape)
-                {
-                    (captureEl as SliderShape).Slider.SetPosition(new Vector2d(pos.X, pos.Y));
-                    (captureEl as SliderShape).Slider.UpdateRelativePos();
-                }
-
-            }
-        }
-
-        private void Ellipse_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            captureEl = sender as NodeShape;
-
-            if (sender is LegShape)
-            {
-                gbLegData.DataContext = (sender as LegShape).Leg;
-            }
-        }
-
-        private void Ellipse_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            captureEl = null;
-        }
+        #endregion
     }
 }
 

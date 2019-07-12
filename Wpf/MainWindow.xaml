@@ -25,20 +25,23 @@
         </TabControl>
        
         <StackPanel Grid.Column="1" Orientation="Vertical">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Mouse xy"/>
-                <TextBlock Name="tbX" Width="25" />
-                <TextBlock Name="tbY" Width="25" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Pixel rgb"/>
-                <TextBlock Name="tbPixR" Width="25" />
-                <TextBlock Name="tbPixG" Width="25" />
-                <TextBlock Name="tbPixB" Width="25" />
-                <TextBlock Name="tbPixA" Width="25" />
-            </StackPanel>
-
-
+            <Button Content="ADD LEG" Click="Button_Click"/>
+            <Button Content="REMOVE LEG" Click="Button_Click_1"/>
+            <GroupBox Header="Mouse">
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Pos xy:  "/>
+                        <TextBlock Name="tbX" Width="25" />
+                        <TextBlock Name="tbY" Width="25" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Pix rgb "/>
+                        <TextBlock Name="tbPixR" Width="25" />
+                        <TextBlock Name="tbPixG" Width="25" />
+                        <TextBlock Name="tbPixB" Width="25" />
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
             <GroupBox Header="LEG" Name="gbLegData">
                 <StackPanel Orientation="Vertical">
                     <StackPanel Orientation="Horizontal">

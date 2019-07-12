@@ -10,22 +10,38 @@ using OpenTK.Graphics.OpenGL;
 
 namespace Wpf
 {
-    static class glObgectCounter
+    public abstract class NodeGlShape
     {
-        public static int redCounter = 255;
-    }
-
-    public class GlShape
-    {
-        public virtual void Draw()
+        private static int counter = 0;
+        protected int Counter
         {
-
+            get { return counter; }
         }
+
+        protected int hashColor;
+        public int HashColor
+        {
+            get { return hashColor; }            
+        }
+
+        private Node node;
+        public Node Node
+        {
+            get { return node; }
+        }
+
+        public NodeGlShape(Node n)
+        {
+            hashColor = byte.MaxValue - Counter;
+            counter++;
+            node = n;
+        }
+
+        public abstract void Draw();
     }
 
-    public class LegGl: GlShape
+    public class LegGlShape: NodeGlShape
     {
-        public int red;
         public float size = 10;
 
         private Leg leg;
@@ -34,10 +50,9 @@ namespace Wpf
             get { return leg; }
         }
 
-        public LegGl(Leg leg)
+        public LegGlShape(Leg leg):base(leg)
         {
             this.leg = leg;
-            red = glObgectCounter.redCounter--;
         }
 
         public override void Draw()
@@ -67,7 +82,7 @@ namespace Wpf
             GL.Translate(v.X, v.Y, 0);
 
             GL.Begin(PrimitiveType.Polygon );
-            GL.Color3(System.Drawing.Color.FromArgb(red, 0, 0));
+            GL.Color3(System.Drawing.Color.FromArgb(hashColor, 0, 0));
             double step = Math.PI / 20;
             double angle = 0.0;
             while (angle < Math.PI * 2)
@@ -79,9 +94,8 @@ namespace Wpf
         }
     }
 
-    public class SliderGl: GlShape
+    public class SliderGlShape: NodeGlShape
     {
-        public int red;
         public float size = 10;
 
         private Slider slider;
@@ -90,10 +104,9 @@ namespace Wpf
             get { return slider; }
         }
 
-        public SliderGl(Slider slider)
+        public SliderGlShape(Slider slider): base(slider)
         {
             this.slider = slider;
-            red = glObgectCounter.redCounter--;
         }
 
         public override void Draw()
@@ -120,7 +133,7 @@ namespace Wpf
             var left = GlConverter.ToGlVector3(slider.center);
             left.X -= slider.width;
             GL.Translate(left);
-            GL.Scale(size, size, 0);
+            GL.Scale(size, 2 * size, 0);
 
             GL.Begin(PrimitiveType.Triangles);
             GL.Color3(System.Drawing.Color.Black);
@@ -134,7 +147,7 @@ namespace Wpf
             var right = GlConverter.ToGlVector3(slider.center);
             right.X += slider.width;
             GL.Translate(right);
-            GL.Scale(size, size, 0);
+            GL.Scale(size, 2 * size, 0);
 
             GL.Begin(PrimitiveType.Triangles);
             GL.Color3(System.Drawing.Color.Black);
@@ -150,7 +163,7 @@ namespace Wpf
             GL.Translate(v.X, v.Y, 0);
 
             GL.Begin(PrimitiveType.Polygon);
-            GL.Color3(System.Drawing.Color.FromArgb(red, 0, 0));
+            GL.Color3(System.Drawing.Color.FromArgb(hashColor, 0, 0));
             double step = Math.PI / 20;
             double angle = 0.0;
             while (angle < Math.PI * 2)

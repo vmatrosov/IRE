@@ -21,21 +21,22 @@ namespace Wpf
         public const double ToRad = Math.PI / 180.0;
     }
 
-    public enum SliderType
-    {
-        Horizontal, Vertical
-    }
-
     public class Node : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-
         protected void NotifyPropertyChanged(String propertyName)
         {
             if (PropertyChanged != null)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+
+        public event Action PosUpdate;
+        protected void OnPositionUpdate()
+        {
+            if (PosUpdate != null)
+                PosUpdate();
         }
 
         protected Vector2d position;
@@ -73,15 +74,6 @@ namespace Wpf
         {
             get; set;
         }
-
-        public event Action PosUpdate;
-
-        protected void OnPositionUpdate()
-        {
-            if (PosUpdate != null)
-                PosUpdate();
-        }
-
     }
 
     public class Leg : Node
@@ -183,17 +175,8 @@ namespace Wpf
 
         public Vector2d center;
 
-        private SliderType type = SliderType.Horizontal;
-        public SliderType Type
-        {
-            get { return type; }
-            set { type = value; NotifyPropertyChanged("Type"); }
-        }
-
         public void SetPosition(Vector2d newPos)
         {
-            if(type == SliderType.Horizontal)
-            {
                 position.Y = center.Y;
                 position.X = newPos.X;
 
@@ -204,7 +187,6 @@ namespace Wpf
 
                 if (dX < -width)
                     position.X = center.X - width;
-            }
 
             OnPositionUpdate();
         }

@@ -18,6 +18,17 @@ namespace Wpf
         public event MouseButtonEventHandler MouseLeftButtonDown;
         public event MouseButtonEventHandler MouseLeftButtonUp;
 
+        private Node node;
+        public Node Node
+        {
+            get { return node; }
+        }
+
+        public NodeShape(Node n)
+        {
+            node = n;
+        }
+
         protected void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (MouseLeftButtonDown != null)
@@ -45,7 +56,8 @@ namespace Wpf
         public Line line = new Line();
         public List<UIElement> uiList = new List<UIElement>();
 
-        public LegShape(Leg leg)
+        public LegShape(Leg leg):
+            base(leg)
         {
             this.leg = leg;
 
@@ -90,7 +102,7 @@ namespace Wpf
         public Line line = new Line();
         public Ellipse point = new Ellipse();
 
-        public SliderShape(Slider slider)
+        public SliderShape(Slider slider): base(slider)
         {
             point.Height = point.Width = 20;
             point.Fill = Brushes.Red;
