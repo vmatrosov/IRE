@@ -45,7 +45,7 @@ namespace Wpf
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadIdentity();
             var mid = (leg.Position + leg.Prev.Position) / 2;
-            mid = GlConverter.ToGlCoord(mid);
+            mid = GlConverter.ToGlVector2(mid);
             GL.Translate(mid.X, mid.Y, 0);
             GL.Rotate(-((float)leg.Angle - 90), Vector3.UnitZ);
             GL.Scale((leg.Length - size) / 2, size/4, 1);
@@ -63,7 +63,7 @@ namespace Wpf
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadIdentity();
 
-            var v = GlConverter.ToGlCoord(leg.Position);
+            var v = GlConverter.ToGlVector2(leg.Position);
             GL.Translate(v.X, v.Y, 0);
 
             GL.Begin(PrimitiveType.Polygon );
@@ -101,9 +101,7 @@ namespace Wpf
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadIdentity();
 
-            var  mid = GlConverter.ToGlCoord(slider.center);
-            GL.Translate(mid.X, mid.Y, 0);
-            //GL.Rotate(-((float)leg.Angle - 90), Vector3.UnitZ);
+            GL.Translate(GlConverter.ToGlVector3(slider.center));
             GL.Scale(slider.width , size / 4, 1);
 
             GL.Begin(PrimitiveType.Polygon);
@@ -119,7 +117,36 @@ namespace Wpf
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadIdentity();
 
-            var v = GlConverter.ToGlCoord(slider.Position);
+            var left = GlConverter.ToGlVector3(slider.center);
+            left.X -= slider.width;
+            GL.Translate(left);
+            GL.Scale(size, size, 0);
+
+            GL.Begin(PrimitiveType.Triangles);
+            GL.Color3(System.Drawing.Color.Black);
+            GL.Vertex2(0, 0);
+            GL.Vertex2(1, 1);
+            GL.Vertex2(-1, 1);
+            GL.End();
+
+            GL.MatrixMode(MatrixMode.Modelview);
+            GL.LoadIdentity();
+            var right = GlConverter.ToGlVector3(slider.center);
+            right.X += slider.width;
+            GL.Translate(right);
+            GL.Scale(size, size, 0);
+
+            GL.Begin(PrimitiveType.Triangles);
+            GL.Color3(System.Drawing.Color.Black);
+            GL.Vertex2(0, 0);
+            GL.Vertex2(1, 1);
+            GL.Vertex2(-1, 1);
+            GL.End();
+
+            GL.MatrixMode(MatrixMode.Modelview);
+            GL.LoadIdentity();
+
+            var v = GlConverter.ToGlVector2(slider.Position);
             GL.Translate(v.X, v.Y, 0);
 
             GL.Begin(PrimitiveType.Polygon);

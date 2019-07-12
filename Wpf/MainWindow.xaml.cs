@@ -26,12 +26,20 @@ namespace Wpf
         public static float width = 0;
         public static float heigth = 0;
 
-        public static Vector2d ToGlCoord(Vector2d p)
+        public static Vector2d ToGlVector2(Vector2d p)
         {
             float halfWidth = width / 2;
             float halfHeigth = heigth / 2;
 
             return new Vector2d((p.X - halfWidth), (p.Y - halfHeigth));
+        }
+
+        public static Vector3d ToGlVector3(Vector2d p)
+        {
+            float halfWidth = width / 2;
+            float halfHeigth = heigth / 2;
+
+            return new Vector3d((p.X - halfWidth), (p.Y - halfHeigth), 0);
         }
 
         public static Point ToWpfCoord(Vector2 p)
@@ -151,6 +159,12 @@ namespace Wpf
                 tbPixA.Text = pixels[3].ToString();
 
                 var res = glObjects.TryGetValue(pixels[0], out captureGl);
+
+                if (captureGl != null)
+                    if (captureGl is LegGl)
+                {
+                    gbLegData.DataContext = (captureGl as LegGl).Leg;
+                }
             }
         }
 
