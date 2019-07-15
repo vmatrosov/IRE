@@ -44,7 +44,7 @@
             </GroupBox>
             <CheckBox Name="cbRigidSystem" Content="Rigid all" Click="cbRigidSystem_Click"/>
            
-            <GroupBox Header="Active Leg"  Visibility="Hidden" Name="gbLegData">
+            <GroupBox Header="Active Leg"  Visibility="Collapsed" Name="gbLegData">
                 <StackPanel Orientation="Vertical">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="x:" />
@@ -70,41 +70,53 @@
                 </StackPanel>
             </GroupBox>
             
-            <GroupBox Name="PosA" Header="Position A">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="X: "/>
-                    <TextBlock Text="{Binding Path=X, StringFormat=\{0:F2\}, Mode=OneWay }"/>
-                    <TextBlock Text="Y: "/>
-                    <TextBlock Text="{Binding Path=Y , StringFormat=\{0:F2\}, Mode=OneWay}"/>
+            <GroupBox Name="PosA" Header="{Binding Path=Caption}">
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="X: "/>
+                        <TextBlock Text="{Binding Path=X, StringFormat=\{0:F2\}, Mode=OneWay}"/>
+                        <TextBlock Text="Y: "/>
+                        <TextBlock Text="{Binding Path=Y , StringFormat=\{0:F2\}, Mode=OneWay}"/>
+                    </StackPanel>
                     <CheckBox Content="Rigid" IsChecked="{Binding Rigid}"/>
+                    <CheckBox Content="Allow Full Rotate" IsChecked="{Binding AllowFullRotate}"/>
                 </StackPanel>
             </GroupBox>
-            <GroupBox Name="PosB" Header="Position B">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="X: "/>
-                    <TextBlock Text="{Binding Path=X, StringFormat=\{0:F2\}, Mode=OneWay }"/>
-                    <TextBlock Text="Y: "/>
-                    <TextBlock Text="{Binding Path=Y , StringFormat=\{0:F2\}, Mode=OneWay}"/>
+            <GroupBox Name="PosB" Header="{Binding Path=Caption}">
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="X: "/>
+                        <TextBlock Text="{Binding Path=X, StringFormat=\{0:F2\}, Mode=OneWay}"/>
+                        <TextBlock Text="Y: "/>
+                        <TextBlock Text="{Binding Path=Y , StringFormat=\{0:F2\}, Mode=OneWay}"/>
+                    </StackPanel>
                     <CheckBox Content="Rigid" IsChecked="{Binding Rigid}"/>
+                    <CheckBox Content="Allow Full Rotate" IsChecked="{Binding AllowFullRotate}"/>
                 </StackPanel>
             </GroupBox>
-            <GroupBox Name="PosC" Header="Position C">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="X: "/>
-                    <TextBlock Text="{Binding Path=X, StringFormat=\{0:F2\}, Mode=OneWay }"/>
-                    <TextBlock Text="Y: "/>
-                    <TextBlock Text="{Binding Path=Y , StringFormat=\{0:F2\}, Mode=OneWay}"/>
+            <GroupBox Name="PosC" Header="{Binding Path=Caption}">
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="X: "/>
+                        <TextBlock Text="{Binding Path=X, StringFormat=\{0:F2\}, Mode=OneWay}"/>
+                        <TextBlock Text="Y: "/>
+                        <TextBlock Text="{Binding Path=Y , StringFormat=\{0:F2\}, Mode=OneWay}"/>
+                    </StackPanel>
                     <CheckBox Content="Rigid" IsChecked="{Binding Rigid}"/>
+                    <CheckBox Content="Allow Full Rotate" IsChecked="{Binding AllowFullRotate}"/>
                 </StackPanel>
             </GroupBox>
 
-            <GroupBox Name="PosD" Header="Position D">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="X: "/>
-                    <TextBlock Text="{Binding Path=X, StringFormat=\{0:F2\}, Mode=OneWay}"/>
-                    <TextBlock Text="Y: "/>
-                    <TextBlock Text="{Binding Path=Y , StringFormat=\{0:F2\}, Mode=OneWay}"/>
+            <GroupBox Name="PosD" Header="{Binding Path=Caption}">
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="X: "/>
+                        <TextBlock Text="{Binding Path=X, StringFormat=\{0:F2\}, Mode=OneWay}"/>
+                        <TextBlock Text="Y: "/>
+                        <TextBlock Text="{Binding Path=Y , StringFormat=\{0:F2\}, Mode=OneWay}"/>
+                    </StackPanel>
                     <CheckBox Content="Rigid" IsChecked="{Binding Rigid}"/>
+                    <CheckBox Content="Allow Full Rotate" IsChecked="{Binding AllowFullRotate}"/>
                 </StackPanel>
             </GroupBox>
             <CheckBox Content="Rigid all" IsChecked="{Binding Rigid}"/>

@@ -15,7 +15,6 @@ using OpenTK.Graphics.OpenGL;
 
 namespace Wpf
 {
-
     public class Node : INotifyPropertyChanged
     {
         public const double ToDeg = 180.0 / Math.PI;
@@ -68,6 +67,20 @@ namespace Wpf
             }
         }
 
+        protected string caption;
+        public string Caption
+        {
+            get { return caption; }
+            set { caption = value; NotifyPropertyChanged("Caption"); }
+        }
+
+        protected bool allowFullRotate = true;
+        public bool AllowFullRotate
+        {
+            get { return allowFullRotate; }
+            set { allowFullRotate = value; NotifyPropertyChanged("AllowFullRotate"); }
+        }
+
         public virtual void UpdateRelativePos(bool rigid)
         {
 
@@ -82,7 +95,6 @@ namespace Wpf
         {
             get { return position.X; }
             set {
-
                 position.X = value;
                 NotifyPropertyChanged("X");
             }
@@ -93,7 +105,6 @@ namespace Wpf
             get { return position.Y; }
             set
             {
-
                 position.Y = value;
                 NotifyPropertyChanged("Y");
             }
@@ -145,8 +156,6 @@ namespace Wpf
             LinkedAngle = angle_;
         }
 
-
-
         private double length = 1.0;
         public double Length
         {
@@ -174,11 +183,15 @@ namespace Wpf
             }
             set
             {
-                base.Pitch = value;
+                var newLinkedAngle = (value - Prev.Pitch) * ToRad;
 
-                linkedAngle = (Pitch - Prev.Pitch) * ToRad;
+                    if (Math.Abs(newLinkedAngle * ToDeg) < 160.0 || Prev.AllowFullRotate)
+                    {
+                        base.Pitch = value;
+                        linkedAngle = newLinkedAngle;
+                    }
+
                 UpdatePos();
-
                 NotifyPropertyChanged("LinkedAngle");
             }
         }
@@ -192,12 +205,19 @@ namespace Wpf
             }
             set
             {
-                linkedAngle = value * ToRad;
-                pitch = (Prev.Pitch + value) * ToRad;
-                UpdatePos();
+                var newLinkedAngle = value * ToRad;
+               
+                    if (Math.Abs(newLinkedAngle * ToDeg) < 160.0 || Prev.AllowFullRotate)
+                    {
+                        linkedAngle = newLinkedAngle;
+                        pitch = (Prev.Pitch + value) * ToRad;
 
+                    }
+
+                UpdatePos();
                 NotifyPropertyChanged("LinkedAngle");
                 NotifyPropertyChanged("Pitch");
+
             }
         }
 

@@ -61,6 +61,7 @@ namespace Wpf
         List<NodeGlShape> glList = new List<NodeGlShape>();
         PropertyGrid pGrid = new PropertyGrid();
 
+  
         public MainWindow()
         {
             InitializeComponent();
@@ -76,26 +77,36 @@ namespace Wpf
             glControl.MakeCurrent();
             glControl.Paint += GlControl_Paint;
             glControl.Dock = DockStyle.Fill;
-            wfh.Child = glControl;
             glControl.Resize += GlControl_Resize;
             glControl.MouseDown += GlControl_MouseClick;
             glControl.MouseUp += GlControl_MouseUp;
             glControl.MouseMove += GlControl_MouseMove;
+            wfh.Child = glControl;
 
             // MODEL
             slider = new Slider();
-            slider.Position = slider.center = new Vector2d(200, 200);
+            slider.Position = slider.center = new Vector2d(200, 300);
+            slider.Caption = "A";
             AddShapeToCanves(new SliderShape(slider));
             glList.Add(new SliderGlShape(slider));
 
+
             PosA.DataContext = slider;
-            PosB.DataContext = AddLeg(slider, -45);
-            PosC.DataContext = AddLeg(slider, 45);
-            PosD.DataContext = AddLeg(slider, 45);
+            PosB.DataContext = AddLeg(slider, -45, "B");
+            PosC.DataContext = AddLeg(slider, 45, "C");
+            PosD.DataContext = AddLeg(slider, 45, "D");
         }
 
         void Draw()
         {
+            GL.Enable(EnableCap.DepthTest);
+
+            GL.ClearColor(0, 1, 1, 1);
+            GL.Clear(
+                ClearBufferMask.ColorBufferBit |
+                ClearBufferMask.DepthBufferBit |
+                ClearBufferMask.StencilBufferBit);
+
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
 
@@ -106,6 +117,8 @@ namespace Wpf
 
             foreach (var v in glList)
                 v.Draw();
+
+            glControl.SwapBuffers();
         }
 
         void AddShapeToCanves(NodeShape ns)
@@ -143,12 +156,13 @@ namespace Wpf
             }
         }
 
-        Leg AddLeg(Node parent, double angle)
+        Leg AddLeg(Node parent, double angle, string caption)
         {
             while (parent.Next != null)
                 parent = parent.Next;
 
             var leg = new Leg(parent, angle, 100);
+            leg.Caption = caption;
 
             parent.Next = leg;
             AddShapeToCanves(new LegShape(leg));
@@ -249,7 +263,7 @@ namespace Wpf
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            AddLeg(slider, 0);
+            AddLeg(slider, 0, "");
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -266,15 +280,11 @@ namespace Wpf
         private void GlControl_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
         {
 
-            GL.ClearColor(0, 1, 1, 1);
-            GL.Clear(
-                ClearBufferMask.ColorBufferBit |
-                ClearBufferMask.DepthBufferBit |
-                ClearBufferMask.StencilBufferBit);
+
 
             Draw();
 
-            glControl.SwapBuffers();
+
         }
 
         #endregion
