@@ -91,10 +91,10 @@ namespace Wpf
             glList.Add(new SliderGlShape(slider));
 
 
-            PosA.DataContext = slider;
-            PosB.DataContext = AddLeg(slider, -45, "B");
-            PosC.DataContext = AddLeg(slider, 45, "C");
-            PosD.DataContext = AddLeg(slider, 45, "D");
+            edA.DataContext = slider;
+            edB.DataContext = AddLeg(slider, -45, "B");
+            edC.DataContext = AddLeg(slider, 45, "C");
+            edD.DataContext = AddLeg(slider, 45, "D");
         }
 
         void Draw()

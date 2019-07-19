@@ -47,8 +47,6 @@ namespace Wpf
             {
                 position = value;
                 NotifyPropertyChanged("Position");
-                NotifyPropertyChanged("X");
-                NotifyPropertyChanged("Y");
             }
         }
 
@@ -89,25 +87,6 @@ namespace Wpf
         public virtual void SetPosition(Vector2d newPos)
         {
 
-        }
-
-        public double X
-        {
-            get { return position.X; }
-            set {
-                position.X = value;
-                NotifyPropertyChanged("X");
-            }
-        }
-
-        public double Y
-        {
-            get { return position.Y; }
-            set
-            {
-                position.Y = value;
-                NotifyPropertyChanged("Y");
-            }
         }
 
         public Node Prev
@@ -185,11 +164,11 @@ namespace Wpf
             {
                 var newLinkedAngle = (value - Prev.Pitch) * ToRad;
 
-                    if (Math.Abs(newLinkedAngle * ToDeg) < 160.0 || Prev.AllowFullRotate)
-                    {
-                        base.Pitch = value;
-                        linkedAngle = newLinkedAngle;
-                    }
+                if (Math.Abs(newLinkedAngle * ToDeg) < 160.0 || Prev.AllowFullRotate)
+                {
+                    base.Pitch = value;
+                    linkedAngle = newLinkedAngle;
+                }
 
                 UpdatePos();
                 NotifyPropertyChanged("LinkedAngle");
@@ -206,13 +185,13 @@ namespace Wpf
             set
             {
                 var newLinkedAngle = value * ToRad;
-               
-                    if (Math.Abs(newLinkedAngle * ToDeg) < 160.0 || Prev.AllowFullRotate)
-                    {
-                        linkedAngle = newLinkedAngle;
-                        pitch = (Prev.Pitch + value) * ToRad;
 
-                    }
+                if (Math.Abs(newLinkedAngle * ToDeg) < 160.0 || Prev.AllowFullRotate)
+                {
+                    linkedAngle = newLinkedAngle;
+                    pitch = (Prev.Pitch + value) * ToRad;
+
+                }
 
                 UpdatePos();
                 NotifyPropertyChanged("LinkedAngle");
@@ -230,8 +209,11 @@ namespace Wpf
 
         private void UpdatePos()
         {
-            X = (Prev.Position.X + Math.Cos(pitch) * length);
-            Y = (Prev.Position.Y + Math.Sin(pitch) * length);
+            var X = (Prev.Position.X + Math.Cos(pitch) * length);
+            var Y = (Prev.Position.Y + Math.Sin(pitch) * length);
+
+            Position = new Vector2d(X, Y);
+
             OnPositionUpdate();
         }
 
@@ -244,7 +226,7 @@ namespace Wpf
             else
             {
                 var dxy = Position - Prev.Position;
-                Pitch = Math.Acos(dxy.X / dxy.Length) * Math.Sign(dxy.Y) * ToDeg;                
+                Pitch = Math.Acos(dxy.X / dxy.Length) * Math.Sign(dxy.Y) * ToDeg;
             }
 
             if (Next != null)
@@ -261,16 +243,18 @@ namespace Wpf
 
         public override void SetPosition(Vector2d newPos)
         {
-            position.Y = center.Y;
-            position.X = newPos.X;
+            var Y = center.Y;
+            var X = newPos.X;
 
             var dX = position.X - center.X;
 
             if (dX > width)
-                position.X = center.X + width;
+                X = center.X + width;
 
             if (dX < -width)
-                position.X = center.X - width;
+                X = center.X - width;
+
+            Position = new Vector2d(X, Y);
 
             OnPositionUpdate();
         }

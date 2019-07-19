@@ -7,123 +7,82 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
 
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
-        </Grid.ColumnDefinitions>
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*"/>
+      <ColumnDefinition Width="Auto"/>
+    </Grid.ColumnDefinitions>
 
-        <TabControl Grid.Column="0">
-            <TabItem Header="WPF">
-                <Canvas  Name="canvas" MouseMove="canvas_MouseMove" Background="AliceBlue">
-                </Canvas>
-            </TabItem>
-            <TabItem Header="OpenGL">
-                <WindowsFormsHost Name="wfh"/>
-            </TabItem>
-                
-        </TabControl>
-       
-        <StackPanel Grid.Column="1" Orientation="Vertical">
-            <Button Content="ADD LEG" Visibility="Hidden" Click="Button_Click"/>
-            <Button Content="REMOVE LEG" Visibility="Hidden" Click="Button_Click_1"/>
-            <GroupBox Header="Mouse" Visibility="Collapsed">
-                <StackPanel Orientation="Vertical">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Pos xy:  "/>
-                        <TextBlock Name="tbX" Width="25" />
-                        <TextBlock Name="tbY" Width="25" />
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Pix rgb "/>
-                        <TextBlock Name="tbPixR" Width="25" />
-                        <TextBlock Name="tbPixG" Width="25" />
-                        <TextBlock Name="tbPixB" Width="25" />
-                    </StackPanel>
-                </StackPanel>
-            </GroupBox>
-            <CheckBox Name="cbRigidSystem" Content="Rigid all" Click="cbRigidSystem_Click"/>
-           
-            <GroupBox Header="Active Leg"  Visibility="Collapsed" Name="gbLegData">
-                <StackPanel Orientation="Vertical">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="x:" />
-                        <TextBox Name="legX" Width="100" Text="{Binding Path=X, StringFormat=\{0:F2\}, Mode=OneWay}" />
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="y:" />
-                        <TextBox Name="legY" Width="100" Text="{Binding Path=Y, StringFormat=\{0:F2\}, Mode=OneWay}" />
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="dist:" />
-                        <TextBox Name="legDist" Width="100" Text="{Binding Path=Length}" />
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="ang:" />
-                        <TextBox Name="legAng" Width="100" Text="{Binding Path=Pitch}"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Link ang:" />
-                        <TextBox Width="100" Text="{Binding Path=LinkedAngle}"/>
-                    </StackPanel>
+    <TabControl Grid.Column="0">
+      <TabItem Header="WPF">
+        <Canvas  Name="canvas" MouseMove="canvas_MouseMove" Background="AliceBlue">
+        </Canvas>
+      </TabItem>
+      <TabItem Header="OpenGL">
+        <WindowsFormsHost Name="wfh"/>
+      </TabItem>
 
-                </StackPanel>
-            </GroupBox>
-            
-            <GroupBox Name="PosA" Header="{Binding Path=Caption}">
-                <StackPanel Orientation="Vertical">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="X: "/>
-                        <TextBlock Text="{Binding Path=X, StringFormat=\{0:F2\}, Mode=OneWay}"/>
-                        <TextBlock Text="Y: "/>
-                        <TextBlock Text="{Binding Path=Y , StringFormat=\{0:F2\}, Mode=OneWay}"/>
-                    </StackPanel>
-                    <CheckBox Content="Rigid" IsChecked="{Binding Rigid}"/>
-                    <CheckBox Content="Allow Full Rotate" IsChecked="{Binding AllowFullRotate}"/>
-                </StackPanel>
-            </GroupBox>
-            <GroupBox Name="PosB" Header="{Binding Path=Caption}">
-                <StackPanel Orientation="Vertical">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="X: "/>
-                        <TextBlock Text="{Binding Path=X, StringFormat=\{0:F2\}, Mode=OneWay}"/>
-                        <TextBlock Text="Y: "/>
-                        <TextBlock Text="{Binding Path=Y , StringFormat=\{0:F2\}, Mode=OneWay}"/>
-                    </StackPanel>
-                    <CheckBox Content="Rigid" IsChecked="{Binding Rigid}"/>
-                    <CheckBox Content="Allow Full Rotate" IsChecked="{Binding AllowFullRotate}"/>
-                </StackPanel>
-            </GroupBox>
-            <GroupBox Name="PosC" Header="{Binding Path=Caption}">
-                <StackPanel Orientation="Vertical">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="X: "/>
-                        <TextBlock Text="{Binding Path=X, StringFormat=\{0:F2\}, Mode=OneWay}"/>
-                        <TextBlock Text="Y: "/>
-                        <TextBlock Text="{Binding Path=Y , StringFormat=\{0:F2\}, Mode=OneWay}"/>
-                    </StackPanel>
-                    <CheckBox Content="Rigid" IsChecked="{Binding Rigid}"/>
-                    <CheckBox Content="Allow Full Rotate" IsChecked="{Binding AllowFullRotate}"/>
-                </StackPanel>
-            </GroupBox>
+    </TabControl>
 
-            <GroupBox Name="PosD" Header="{Binding Path=Caption}">
-                <StackPanel Orientation="Vertical">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="X: "/>
-                        <TextBlock Text="{Binding Path=X, StringFormat=\{0:F2\}, Mode=OneWay}"/>
-                        <TextBlock Text="Y: "/>
-                        <TextBlock Text="{Binding Path=Y , StringFormat=\{0:F2\}, Mode=OneWay}"/>
-                    </StackPanel>
-                    <CheckBox Content="Rigid" IsChecked="{Binding Rigid}"/>
-                    <CheckBox Content="Allow Full Rotate" IsChecked="{Binding AllowFullRotate}"/>
-                </StackPanel>
-            </GroupBox>
-            <CheckBox Content="Rigid all" IsChecked="{Binding Rigid}"/>
+    <StackPanel Grid.Column="1" Orientation="Vertical">
+      
+      <Button Content="ADD LEG" Visibility="Hidden" Click="Button_Click"/>
+      <Button Content="REMOVE LEG" Visibility="Hidden" Click="Button_Click_1"/>
+      
+      <GroupBox Header="Mouse" Visibility="Collapsed">
+        <StackPanel Orientation="Vertical">
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Pos xy:  "/>
+            <TextBlock Name="tbX" Width="25" />
+            <TextBlock Name="tbY" Width="25" />
+          </StackPanel>
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Pix rgb "/>
+            <TextBlock Name="tbPixR" Width="25" />
+            <TextBlock Name="tbPixG" Width="25" />
+            <TextBlock Name="tbPixB" Width="25" />
+          </StackPanel>
         </StackPanel>
+      </GroupBox>
+      
+      <CheckBox Name="cbRigidSystem" Content="Rigid all" Click="cbRigidSystem_Click"/>
+      
+      <GroupBox Header="Active Leg"  Visibility="Collapsed" Name="gbLegData">
+        <StackPanel Orientation="Vertical">
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="x:" />
+            <TextBox Name="legX" Width="100" Text="{Binding Path=X, StringFormat=\{0:F2\}, Mode=OneWay}" />
+          </StackPanel>
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="y:" />
+            <TextBox Name="legY" Width="100" Text="{Binding Path=Y, StringFormat=\{0:F2\}, Mode=OneWay}" />
+          </StackPanel>
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="dist:" />
+            <TextBox Name="legDist" Width="100" Text="{Binding Path=Length}" />
+          </StackPanel>
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="ang:" />
+            <TextBox Name="legAng" Width="100" Text="{Binding Path=Pitch}"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Link ang:" />
+            <TextBox Width="100" Text="{Binding Path=LinkedAngle}"/>
+          </StackPanel>
+
+        </StackPanel>
+      </GroupBox>
+
+      <local:NodeEditor x:Name="edA" />
+      <local:NodeEditor x:Name="edB" />
+      <local:NodeEditor x:Name="edC" />
+      <local:NodeEditor x:Name="edD" />
+      
+      <CheckBox Content="Rigid all" IsChecked="{Binding Rigid}"/>
 
 
-    </Grid>
 
-
+    </StackPanel>
+    
+  </Grid>
 </Window>
